@@ -1,14 +1,22 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import useFetch from './useFetch';
 
 const BlogDetails = () => {
   const { id } = useParams();
 
   const { data: blog, isPending, error } = useFetch(`http://localhost:8000/blogs/${id}`);
+  const navigate = useNavigate();
 
+  const handleClick = () => {
+    fetch(`http://localhost:8000/blogs/${id}`, {
+      method: 'DELETE',
+    }).then(() => {
+      console.log('blog deleted');
+      navigate('../', { replace: true });
+    });
+  };
   return (
     <section className='blog-details'>
-      <h2>Blog Details{id}</h2>
       {isPending && <div>Loading...</div>}
       {error && <div>{error}</div>}
       {blog && (
@@ -16,6 +24,7 @@ const BlogDetails = () => {
           <h2>{blog.title}</h2>
           <p>Written by {blog.author}</p>
           <p className='text'>{blog.body}</p>
+          <button onClick={handleClick}>delete</button>
         </article>
       )}
     </section>
